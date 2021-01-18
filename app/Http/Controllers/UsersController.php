@@ -22,7 +22,7 @@ class UsersController extends Controller
     // 用户列表页面
     public function index()
     {
-        $users = User::all();
+        $users = User::paginate(6);
         return view('users.index', compact('users'));
     }
 
@@ -68,7 +68,7 @@ class UsersController extends Controller
     }
 
     // 保存个人资料修改
-    public function update(Request $request, User $user)
+    public function update(User $user, Request $request)
     {
         $this->authorize('update', $user);
         $this->validate($request, [
