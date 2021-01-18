@@ -7,6 +7,18 @@ use App\Models\User;
 
 class UsersController extends Controller
 {
+    // 构造函数 初始化启用中间件
+    public function __construct()
+    {
+        // 设定指定方法不使用 Auth 中间件进行过滤
+        $this->middleware('auth', [
+            'except' => ['show', 'create', 'store']
+        ]);
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
     // 注册页面
     public function create()
     {
@@ -43,13 +55,15 @@ class UsersController extends Controller
     // 展示个人资料修改页面
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
+
         return view('users.edit', compact('user'));
     }
 
     // 保存个人资料修改
-
     public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
         $this->validate($request, [
             'name' => 'required|unique:users|max:50',
             'password' => 'nullable|confirmed|min:6'
