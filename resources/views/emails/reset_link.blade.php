@@ -9,9 +9,9 @@
 
 <body>
     <p>
-        请点击以下梁姐姐进入下一步操作：
-        <a href="{{ route('password.rest', $token) }}">
-            {{ route('password.rest', $token) }}
+        请点击以下链接进入下一步操作：
+        <a href="{{ route('password.reset', $token) }}">
+            {{ route('password.reset', $token) }}
         </a>
     </p>
     <p>如果这不是您本人的操作，请忽略此邮件。</p>

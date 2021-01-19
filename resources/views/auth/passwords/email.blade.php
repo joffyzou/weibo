@@ -13,7 +13,7 @@
                 @endif
                 <form action="{{ route('password.email') }}" method="POST">
                     {{ csrf_field() }}
-                    <div class="form-group{{ $errors->has('email')?'has-error':'' }}">
+                    <div class="form-group {{ $errors->has('email')?'has-error':'' }}">
                         <label for="email" class="form-control-label">邮箱地址</label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control" required>
                         @if ($errors->has('email'))
