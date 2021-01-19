@@ -12,6 +12,9 @@ class SessionsController extends Controller
         $this->middleware('guest', [
             'only' => ['create']
         ]);
+        $this->middleware('throttle:10,10', [
+            'only' => ['create']
+        ]);
     }
 
     // 显示登录页面
