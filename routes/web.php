@@ -31,4 +31,15 @@ Route::post('login', 'SessionsController@store')->name('login');
 // 销毁登录状态，退出
 Route::delete('logout', 'SessionsController@destroy')->name('logout');
 
+// 发送账户激活邮件
 Route::get('signup/confirm/{token}', 'UsersController@confirmEmail')->name('confirm_email');
+
+// 展示发送密码重置邮件表单页面
+Route::get('password/rest', 'PasswordController@showLinkRequestForm')->name('password.request');
+// 发送密码重置邮件
+Route::post('password/email', 'PasswordController@sendResetLinkEmail')->name('password.email');
+
+// 展示密码重置表单
+Route::get('password/rest/{token}', 'PasswordController@showRestForm')->name('password.rest');
+// 提交密码重置
+Route::post('password/rest', 'PasswordController@rest')->name('password.update');
