@@ -49,6 +49,6 @@ class SessionsController extends Controller
         Auth::logout();
         session()->flash('success', '您已成功退出！');
 
-        return redirect('login');
+        return redirect()->back();
     }
 }
