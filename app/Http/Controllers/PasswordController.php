@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,7 @@ class PasswordController extends Controller
 
         DB::table('password_resets')->updateOrInsert(['email' => $email], [
             'email' => $email,
-            'token' => $token,
+            'token' => Hash::make($token),
             'created_at' => new Carbon
         ]);
 
@@ -57,9 +58,41 @@ class PasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8'
+            'password' => 'required|confirmed|min:6'
         ]);
         $email = $request->email;
         $token = $request->token;
+        $expires = 60 * 10;
+        $user = User::where('email', $email)->first();
+
+        if (is_null($user)) {
+            session()->flash('danger', '邮箱未注册');
+
+            return redirect()->back()->withInput();
+        }
+        $record = DB::table('password_resets')->where('email', $email)->first();
+
+        if ($record) {
+            if (Carbon::parse($record->created_at)->addSeconds($expires)->isPast()) {
+                session()->flash('danger', '链接已过期，请重新尝试！');
+
+                return redirect()->back();
+            }
+
+            if ( ! Hash::check($token, $record->token)) {
+                session()->flash('danger', '令牌错误！');
+
+                return redirect()->back();
+            }
+
+            $user->update(['password' => bcrypt($request->password)]);
+            session()->flash('success', '密码重置成功，请使用新的密码登录！');
+
+            return redirect()->route('login');
+        }
+
+        session()->flash('danger', '未找到重置记录！');
+
+        return redirect()->back();
     }
 }
