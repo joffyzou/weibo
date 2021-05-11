@@ -44,4 +44,22 @@ class PasswordController extends Controller
 
         return redirect()->back();
     }
+
+    public function showResetForm(Request $request)
+    {
+        $token = $request->route()->parameter('token');
+
+        return view('auth.passwords.reset', compact('token'));
+    }
+
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:8'
+        ]);
+        $email = $request->email;
+        $token = $request->token;
+    }
 }
