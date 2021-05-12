@@ -64,13 +64,17 @@ class User extends Authenticatable
 
     public function feed()
     {
-        return $this->statuses()->orderBy('created_at', 'desc');
+        $user_ids = $this->followings->pluck('id')->toArray();
+        array_push($user_ids, $this->id);
+
+        return Status::whereIn('user_id', $user_ids)->with('user')->orderBy('created_at', 'desc');
+        // return $this->statuses()->orderBy('created_at', 'desc');
     }
 
     // 粉丝列表 $user->followers()
     public function followers()
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
     }
 
     // 关注人列表 $user->followings()
